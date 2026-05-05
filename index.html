@@ -1,0 +1,822 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><script>
+(function(){
+  var __k="e1eb254c-9b72-459e-aa1c-e3a1e318fed0";
+  var __a=null;
+  var __preload=null;
+  if(!__k)return;
+  var _f=window.fetch;
+  // S3 URL → file_key 추출 후 __a 매핑 lookup → assets/ 로컬 경로 치환
+  // 응답에 새 signed URL이 와도 같은 file_key면 같은 assets/ → 영구 작동
+  function patchUrls(data){
+    if(!__a)return data;
+    try{
+      var s=JSON.stringify(data);
+      // 응답 안의 모든 S3 URL을 정규식으로 찾고, file_key 추출 → 매핑 lookup
+      s=s.replace(/https:\/\/prod-files-secure\.s3\.amazonaws\.com\/[^"\s<>]+/g,function(url){
+        var m=url.match(/\.amazonaws\.com\/([^?\\]+)/);
+        if(!m)return url;
+        var key=m[1].replace(/\\u002F/g,"/");
+        return __a[key]||url;
+      });
+      return JSON.parse(s);
+    }catch(e){return data;}
+  }
+  function callMisiso(method,path,body){
+    return _f("https://misiso.com/api/notion/deploy-proxy",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({deployKey:__k,path:path,method:method,body:body})
+    }).then(function(r){
+      var status=r.status;
+      return r.json().then(function(data){return {status:status,data:patchUrls(data)};});
+    });
+  }
+  // preload pattern — 페이지 로드와 병렬로 정적 fetch 호출 미리 시작
+  var __preloadCache={};
+  if(__preload){
+    for(var i=0;i<__preload.length;i++){
+      (function(c){
+        var key=c.method+":"+c.path+":"+(c.body?JSON.stringify(c.body):"");
+        __preloadCache[key]=callMisiso(c.method,c.path,c.body);
+      })(__preload[i]);
+    }
+  }
+  window.fetch=function(url,opts){
+    var u=typeof url==="string"?url:String(url);
+    if(!u.startsWith("/api/notion/"))return _f.apply(this,arguments);
+    var path=u.slice("/api/notion".length);
+    var method=(opts&&opts.method)||"GET";
+    var body;
+    try{body=opts&&opts.body?JSON.parse(opts.body):undefined;}catch(e){body=opts&&opts.body;}
+    var ck=method+":"+path+":"+(body?JSON.stringify(body):"");
+    var promise=__preloadCache[ck];
+    if(promise){delete __preloadCache[ck];}
+    else{promise=callMisiso(method,path,body);}
+    return promise.then(function(res){
+      return new Response(JSON.stringify(res.data),{
+        status:res.status,
+        headers:{"Content-Type":"application/json"}
+      });
+    });
+  };
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://misiso.com" crossorigin/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="린다이어트 스탠다드 12주 프로그램 안내 (능곡해나무한의원)"/>
+<meta property="og:description" content="린다이어트 스탠다드 12주 프로그램 안내 (능곡해나무한의원)"/>
+<title>린다이어트 스탠다드 12주 프로그램 안내 (능곡해나무한의원)</title>
+<meta name="description" content="린다이어트 스탠다드 12주 프로그램 안내 (능곡해나무한의원)"/>
+<meta property="og:image" content="https://Junesight.github.io/leandiet-standard-nkhaenamu/og-image-00jpme5t.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://Junesight.github.io/leandiet-standard-nkhaenamu/og-image-00jpme5t.png"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2032%2032'%3E%3Crect%20width%3D'32'%20height%3D'32'%20rx%3D'6'%20fill%3D'%236366f1'%2F%3E%3Ctext%20x%3D'16'%20y%3D'22'%20text-anchor%3D'middle'%20font-size%3D'18'%20fill%3D'white'%20font-family%3D'sans-serif'%3E%EB%A6%B0%3C%2Ftext%3E%3C%2Fsvg%3E"/>
+<script src="https://cdn.tailwindcss.com"></script>
+</head><body><!DOCTYPE html>
+<html lang="ko">
+<head>
+
+
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #7C3AED;
+    --primary-light: #A78BFA;
+    --primary-bg: #F5F3FF;
+    --accent: #EC4899;
+    --accent-light: #FBCFE8;
+    --dark: #1E1B4B;
+    --gray: #6B7280;
+    --light-gray: #F3F4F6;
+    --white: #FFFFFF;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(124,58,237,0.08);
+  }
+  body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(180deg, #F5F3FF 0%, #EDE9FE 30%, #F5F3FF 100%);
+    color: var(--dark);
+    min-height: 100vh;
+    padding-bottom: 100px;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 50%, #EC4899 100%);
+    padding: 48px 24px 36px;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+    animation: shimmer 8s ease-in-out infinite;
+  }
+  @keyframes shimmer { 0%,100%{transform:translateX(-30%)} 50%{transform:translateX(30%)} }
+  .hero-content { position: relative; z-index: 1; }
+  .hero-icon { font-size: 3rem; margin-bottom: 12px; }
+  .hero h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .hero .subtitle { font-size: 0.9rem; opacity: 0.9; font-weight: 400; line-height: 1.6; }
+  .hero .badge { display: inline-block; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 30px; padding: 6px 16px; font-size: 0.78rem; font-weight: 600; margin-top: 16px; border: 1px solid rgba(255,255,255,0.3); }
+
+  /* Navigation Tabs */
+  .nav-wrap {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(124,58,237,0.1);
+    padding: 0 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .nav-wrap::-webkit-scrollbar { display: none; }
+  .nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 0;
+  }
+  .nav-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gray);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s;
+    font-family: inherit;
+  }
+  .nav-btn:hover { background: var(--primary-bg); color: var(--primary); }
+  .nav-btn.active { background: var(--primary); color: white; }
+
+  /* Content Container */
+  .container { max-width: 640px; margin: 0 auto; padding: 20px 16px; }
+
+  /* Section */
+  .section { display: none; animation: fadeIn 0.4s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(124,58,237,0.06);
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .card-icon.purple { background: var(--primary-bg); }
+  .card-icon.pink { background: #FDF2F8; }
+  .card-icon.green { background: #ECFDF5; }
+  .card-icon.yellow { background: #FFFBEB; }
+  .card-icon.blue { background: #EFF6FF; }
+  .card-icon.red { background: #FEF2F2; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: var(--dark); }
+  .card-subtitle { font-size: 0.78rem; color: var(--gray); margin-top: 2px; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 8px; top: 8px; bottom: 8px;
+    width: 2px; background: linear-gradient(180deg, var(--primary), var(--accent));
+    border-radius: 2px;
+  }
+  .tl-item { position: relative; padding-bottom: 24px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-dot {
+    position: absolute; left: -24px; top: 4px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--primary-light);
+  }
+  .tl-dot.pink { background: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+  .tl-item h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+  .tl-item p { font-size: 0.85rem; color: #4B5563; line-height: 1.7; }
+
+  /* Info Box */
+  .info-box {
+    background: var(--primary-bg);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 12px;
+    border-left: 3px solid var(--primary);
+  }
+  .info-box.pink { background: #FDF2F8; border-left-color: var(--accent); }
+  .info-box.green { background: #ECFDF5; border-left-color: var(--success); }
+  .info-box.yellow { background: #FFFBEB; border-left-color: var(--warning); }
+  .info-box.red { background: #FEF2F2; border-left-color: var(--danger); }
+  .info-box p { font-size: 0.83rem; color: #4B5563; line-height: 1.7; }
+  .info-box strong { color: var(--dark); }
+
+  /* Tag / Pill */
+  .tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .tag.good { background: #ECFDF5; color: #059669; }
+  .tag.bad { background: #FEF2F2; color: #DC2626; }
+  .tag.neutral { background: var(--light-gray); color: var(--gray); }
+
+  /* Checklist */
+  .checklist { list-style: none; }
+  .checklist li {
+    padding: 12px 0;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .check-icon { flex-shrink: 0; margin-top: 2px; }
+
+  /* Week Tracker */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .week-cell {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    position: relative;
+  }
+  .week-cell.detox { background: #FDF2F8; color: var(--accent); }
+  .week-cell.diet { background: var(--primary-bg); color: var(--primary); }
+  .week-cell.active { border-color: var(--primary); transform: scale(1.05); }
+  .week-cell .week-num { font-size: 1rem; font-weight: 800; }
+  .week-cell .week-label { font-size: 0.58rem; margin-top: 2px; }
+  .week-cell.checked::after {
+    content: '✓';
+    position: absolute;
+    top: 2px; right: 4px;
+    font-size: 0.65rem;
+    color: var(--success);
+  }
+
+  /* Progress Bar */
+  .progress-wrap { margin: 16px 0; }
+  .progress-bar {
+    height: 8px;
+    background: #E5E7EB;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 8px;
+    transition: width 0.5s ease;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--gray);
+    margin-top: 6px;
+  }
+
+  /* Food Grid */
+  .food-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .food-col h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; padding: 8px 12px; border-radius: 8px; text-align: center; }
+  .food-col.good h4 { background: #ECFDF5; color: #059669; }
+  .food-col.bad h4 { background: #FEF2F2; color: #DC2626; }
+  .food-col ul { list-style: none; }
+  .food-col ul li { font-size: 0.82rem; padding: 5px 0; color: #4B5563; border-bottom: 1px dashed #F3F4F6; }
+  .food-col ul li:last-child { border-bottom: none; }
+  .food-col ul li::before { margin-right: 6px; }
+  .food-col.good ul li::before { content: '✅'; }
+  .food-col.bad ul li::before { content: '🚫'; }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(124,58,237,0.1);
+    padding: 12px 24px;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .bottom-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .bottom-btn.prev { background: var(--light-gray); color: var(--gray); }
+  .bottom-btn.prev:hover { background: #E5E7EB; }
+  .bottom-btn.next { background: var(--primary); color: white; }
+  .bottom-btn.next:hover { background: #6D28D9; }
+  .bottom-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Misc */
+  .divider { height: 1px; background: #E5E7EB; margin: 20px 0; }
+  .highlight { background: linear-gradient(120deg, rgba(124,58,237,0.1), rgba(236,72,153,0.1)); padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+  .emoji-big { font-size: 2.5rem; text-align: center; margin: 20px 0; }
+
+  /* Accordion */
+  .accordion { margin-bottom: 8px; }
+  .acc-header {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .acc-header:hover { border-color: var(--primary-light); }
+  .acc-header .arrow { transition: transform 0.3s; }
+  .acc-header.open .arrow { transform: rotate(180deg); }
+  .acc-header.open { border-color: var(--primary); background: var(--primary-bg); }
+  .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    padding: 0 16px;
+  }
+  .acc-body.open { max-height: 800px; padding: 16px; }
+  .acc-body p, .acc-body li { font-size: 0.85rem; color: #4B5563; line-height: 1.7; }
+
+  /* Stats Row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .stat-box {
+    text-align: center;
+    background: white;
+    border-radius: 12px;
+    padding: 16px 8px;
+    box-shadow: var(--shadow);
+  }
+  .stat-box .num { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+  .stat-box .label { font-size: 0.7rem; color: var(--gray); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-content">
+    <h1>린다이어트 스탠다드<br>12주 프로그램 안내</h1>
+    <div class="subtitle">부부한의원이 끝까지 함께하겠습니다👏</div>
+    <a href="https://naver.me/G9r5Gz2l" target="_blank" style="display:inline-block;margin-top:16px;padding:12px 28px;background:white;color:var(--primary);border-radius:30px;font-size:0.9rem;font-weight:700;text-decoration:none;box-shadow:0 2px 12px rgba(0,0,0,0.15);transition:transform 0.2s" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">📅 네이버 진료 예약하기</a>
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav-wrap">
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('schedule')">📅 일정 요약</button>
+    <button class="nav-btn" onclick="showSection('detox')">🧪 디톡스</button>
+    <button class="nav-btn" onclick="showSection('diet')">💪 다이어트</button>
+    <button class="nav-btn" onclick="showSection('food')">🥗 식단</button>
+
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ===== 1. SCHEDULE ===== -->
+  <div class="section active" id="sec-schedule">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">📅</div>
+        <div><div class="card-title">스탠다드 12주 일정 요약</div></div>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot pink"></div>
+          <h4>1일차 저녁 — 디톡스 시작</h4>
+          <p>저녁식사 후 금식 시작. 저녁 8시에 비움환 1포 복용</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot pink"></div>
+          <h4>2일차 ~ 3일차 — 디톡스 집중</h4>
+          <p>기상 직후부터 비움환을 3시간 간격으로 복용<br>(하루 최대 3포까지, 대변을 보면 중단)<br>식사는 사골국물로 대체 (혹은 무설탕 두유)</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <h4>4일차 ~ 2주 — 다이어트환 적응기</h4>
+          <p>절반식 + 매 식전 다이어트환 1포 (하루 3포)<br>⚠️ 불편한 증상이 발생하시면, 언제든 연락주세요.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <h4>3주차 ~ 12주 — 본격적인 다이어트 진행</h4>
+          <p>2주마다 인바디 피드백 후 추가 처방 반복<br>12주 마무리 후 프로그램 연장 및 종료 여부 결정</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 3. DETOX ===== -->
+  <div class="section" id="sec-detox">
+    <div style="text-align:center;padding:16px 0;display:flex;flex-direction:column;align-items:center"><img src="https://github.com/Junesight/leandiet-standard/blob/main/%E1%84%87%E1%85%B5%E1%84%8B%E1%85%AE%E1%86%B7%E1%84%92%E1%85%AA%E1%86%AB.png?raw=true" alt="비움환" style="max-width:160px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08)"><div style="margin-top:8px;font-size:0.82rem;font-weight:600;color:var(--primary)">비움환(보라색)</div></div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon pink">1️⃣</div>
+        <div><div class="card-title">디톡스 1일차 (저녁)</div><div class="card-subtitle">프로그램 첫날, 저녁부터 시작</div></div>
+      </div>
+      <ul class="checklist">
+        <li><span class="check-icon">🍽️</span><div><strong>식단:</strong> 저녁식사 후 금식 시작</div></li>
+        <li><span class="check-icon">💊</span><div><strong>한약:</strong> 저녁 8시 <span class="highlight">비움환 1포</span> 복용</div></li>
+      </ul>
+      <div class="info-box pink">
+        <p>💡 <strong>디톡스는 휴일을 고려하여 시작하세요.</strong><br>충분히 휴식할 수 있는 날의 전날 저녁부터 시작하시는 것을 권장합니다. (토,일 쉬시는 경우, 금요일 저녁부터 시작)</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon pink">2️⃣</div>
+        <div><div class="card-title">디톡스 2일차</div><div class="card-subtitle">본격 디톡스 진행</div></div>
+      </div>
+      <ul class="checklist">
+        <li><span class="check-icon">🍽️</span><div><strong>식단:</strong> <span class="highlight">사골국물만</span> 섭취</div></li>
+        <li><span class="check-icon">💊</span><div><strong>한약:</strong> 기상 직후 비움환 1포<br>→ 변을 볼 때까지 <strong>3시간 간격</strong>으로 1포씩<br>→ <strong>하루 최대 3포</strong></div></li>
+      </ul>
+      <div class="info-box pink">
+        <p>🚽 <strong>변을 보시면 당일 복용을 중단하세요.</strong><br>배변 활동이 활발해지는 것은 정상적인 디톡스 반응입니다.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon pink">3️⃣</div>
+        <div><div class="card-title">디톡스 3일차</div><div class="card-subtitle">디톡스 마무리</div></div>
+      </div>
+      <ul class="checklist">
+        <li><span class="check-icon">🍽️</span><div><strong>식단:</strong> <span class="highlight">사골국물만</span> 섭취</div></li>
+        <li><span class="check-icon">💊</span><div><strong>한약:</strong> 2일차와 동일</div></li>
+      </ul>
+      <div class="info-box green">
+        <p>✅ 디톡스 완료! 4일차부터 다이어트 단계로 전환됩니다.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">ℹ️</div>
+        <div><div class="card-title">디톡스 참고사항</div></div>
+      </div>
+      <ul class="checklist">
+        <li><span class="check-icon">✅</span><div><strong>사골국물</strong>은 단백질과 미네랄이 풍부하여 단식 시 부족한 영양을 채워줍니다. (편의점에서 구매 가능)</div></li>
+        <li><span class="check-icon">✅</span><div>일부 약의 표면에 있는 <strong>흰 가루</strong>는 망초라는 한약재이므로 안심하시고 복용하셔도 됩니다.</div></li>
+        <li><span class="check-icon">✅</span><div><strong>레몬즙·라임즙</strong>을 물에 타 드시면 디톡스 효과가 더욱 좋습니다.</div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon red">⚠️</div>
+        <div><div class="card-title">유의사항</div></div>
+      </div>
+      <ul class="checklist">
+        <li><span class="check-icon">🩸</span><div><strong>저혈압 환자 주의</strong><br>디톡스 과정에서 충분한 휴식 및 수분 섭취를 하지 않으면 현훈 증상이 나타날 수 있습니다. 디톡스 기간 안전사고에 조심하시고, 최대한 누워서 휴식을 취하세요. 심한 경우 디톡스를 제외하고 바로 다이어트를 진행할 수 있습니다.</div></li>
+        <li><span class="check-icon">🤢</span><div><strong>디톡스 중 복통</strong><br>해독 과정에서 나타나는 증상입니다. 통상 <strong>4시간 내 진정</strong>되나, 불편감이 지속되는 경우 한의원에 연락주세요.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== 4. DIET ===== -->
+  <div class="section" id="sec-diet">
+    <div style="text-align:center;padding:16px 0;display:flex;flex-direction:column;align-items:center"><img src="https://github.com/Junesight/leandiet-standard/blob/main/%E1%84%83%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%A5%E1%84%90%E1%85%B3%E1%84%92%E1%85%AA%E1%86%AB.png?raw=true" alt="다이어트환" style="max-width:160px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08)"><div style="margin-top:8px;font-size:0.82rem;font-weight:600;color:var(--dark)">다이어트환(흰색)</div></div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">💊</div>
+        <div><div class="card-title">다이어트환 복용법</div><div class="card-subtitle">디톡스 이후 ~ 12주차까지</div></div>
+      </div>
+      <ul class="checklist">
+        <li><span class="check-icon">🌅</span><div><strong>아침</strong> 식사 30분 전 — 다이어트환 <span class="highlight">1포</span></div></li>
+        <li><span class="check-icon">☀️</span><div><strong>점심</strong> 식사 30분 전 — 다이어트환 <span class="highlight">1포</span></div></li>
+        <li><span class="check-icon">🌙</span><div><strong>저녁</strong> 식사 30분 전 — 다이어트환 <span class="highlight">1포</span></div></li>
+      </ul>
+      <div class="info-box">
+        <p>💡 <strong>매 식사 전</strong>에 복용하면 포만감이 형성되어 자연스럽게 식사량이 줄어듭니다.</p>
+        <p style="margin-top:8px">💡 깜빡하고 식사를 해버리셨더라도 약을 건너뛰지 마시고, <strong>식후라도 하루 3회 꼭 챙겨드세요.</strong></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">🥗</div>
+        <div><div class="card-title">식단 핵심 원칙</div></div>
+      </div>
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:3rem;margin-bottom:8px">🍚 → <span style="font-size:2rem">🍚</span></div>
+        <div style="font-size:1.2rem;font-weight:800;color:var(--primary)">모든 음식을 절반만!</div>
+        <div style="font-size:0.85rem;color:var(--gray);margin-top:6px">하루 3포 한약을 드시면<br>어렵지 않게 실천하실 수 있습니다.</div>
+      </div>
+      <div class="info-box green">
+        <p>🥚 공복감이 심할 때는 <strong>사골국물</strong> 또는 <strong>삶은 계란</strong>을 드세요.<br>🕐 <strong>하루 3끼</strong>를 꼭 챙겨 드셔야 합니다.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon yellow">🔁</div>
+        <div><div class="card-title">재진 안내</div><div class="card-subtitle">2주마다 재진</div></div>
+      </div>
+      <ul class="checklist">
+        <li><span class="check-icon">📋</span>2주마다 내원하시어 원장님과 인바디 피드백 후, 약 단계를 조절하여 추가 처방해 드립니다.</li>
+        <li><span class="check-icon">💬</span>다이어트 진행하시며 불편한 부분들이 있으셨다면, 내원하셨을 때 꼭 말씀해주세요.</li>
+        <li><span class="check-icon">📱</span>감량 속도가 생각보다 느릴 경우, 앱 사용 기록(복약, 체중, 식단 기록)이 있어야 원인을 쉽게 파악할 수 있습니다. 앱을 꼭 사용해주세요.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon red">⚠️</div>
+        <div><div class="card-title">유의사항</div></div>
+      </div>
+      <ul class="checklist">
+        <li><span class="check-icon">💊</span><div><strong>양약·영양제 복용 시</strong><br><strong>반드시 한의사와 상담 후 복용하세요.</strong><br>🚨 특히 주의가 필요한 약물<br><span class="tag bad">감기약</span> <span class="tag bad">두통약</span> <span class="tag bad">무좀약</span> <span class="tag bad">혈압약</span> <span class="tag bad">정신과 약</span><br><span class="tag bad">가르시니아 캄보지아</span> <span class="tag bad">세인트존스워트</span></div></li>
+        <li><span class="check-icon">🍺</span><div><strong>술 마시는 날, 숙취가 심한 날에는<br>다이어트환 복용이 불가합니다.</strong><br>음주는 간을 피로하게 만듭니다. 다이어트 환을 같이 드시면 몸에 무리가 갈 수 있으니, 술 마시는 날이나 숙취가 있는 날은 다이어트환을 드시지 마세요.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== 5. FOOD ===== -->
+  <div class="section" id="sec-food">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">🥗</div>
+        <div><div class="card-title">식단 가이드</div><div class="card-subtitle">모든 음식을 절반만 드세요</div></div>
+      </div>
+
+      <div class="food-grid">
+        <div class="food-col good">
+          <h4>✅ 많이 드세요!</h4>
+          <ul>
+            <li>두부</li>
+            <li>콩류</li>
+            <li>생선</li>
+            <li>토마토</li>
+            <li>백색육 (닭, 오리)</li>
+            <li>계란</li>
+          </ul>
+        </div>
+        <div class="food-col bad">
+          <h4>🚫 꼭 피해주세요!</h4>
+          <ul>
+            <li>가공육 (소세지, 햄)</li>
+            <li>적색육 (소, 돼지, 양)</li>
+            <li>각종 양념장</li>
+            <li>떡볶이</li>
+            <li>라면</li>
+            <li>드레싱</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon yellow">🥤</div>
+        <div><div class="card-title">음료·간식 가이드</div></div>
+      </div>
+      <div class="food-grid">
+        <div class="food-col good">
+          <h4>✅ 추천</h4>
+          <ul>
+            <li>견과류</li>
+            <li>시나몬차 (계피차)</li>
+            <li>사골국물</li>
+            <li>물 (하루 1.5L+)</li>
+            <li>레몬·라임 물</li>
+          </ul>
+        </div>
+        <div class="food-col bad">
+          <h4>🚫 금지</h4>
+          <ul>
+            <li>사탕 · 초콜릿</li>
+            <li>과자</li>
+            <li>탄산음료 · 탄산수</li>
+            <li>시럽 들어간 커피</li>
+            <li>주스</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">💡</div>
+        <div><div class="card-title">효과를 높이는 꿀팁</div></div>
+      </div>
+      <p style="font-size:0.88rem;color:#4B5563;line-height:1.8">🌙 <strong>12시 전에 주무세요.</strong> 수면 중 체중 감소 호르몬이 분비됩니다.<br><br>🫖 <strong>계피차(시나몬차)</strong>를 자주 드시면 더 좋습니다.<br><br>💧 <strong>물은 하루 1.5L 이상,</strong> 조금씩 자주 드세요.<br><br>🍽️ <strong>하루 3끼</strong>를 반드시 챙겨 드세요. 끼니 거르기는 금물!</p>
+    </div>
+  </div>
+
+
+
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <button class="bottom-btn prev" id="btnPrev" onclick="navPrev()" disabled>← 이전</button>
+  <button class="bottom-btn next" id="btnNext" onclick="navNext()">다음 →</button>
+</div>
+
+<script>
+// localStorage 안전 래퍼 (샌드박스 환경 대응)
+var _memStore = {};
+var _useLS = false;
+try { localStorage.setItem('__test__','1'); localStorage.removeItem('__test__'); _useLS = true; } catch(e) {}
+function storeGet(k) { if(_useLS) return localStorage.getItem(k); return _memStore[k]||null; }
+function storeSet(k,v) { if(_useLS) localStorage.setItem(k,v); else _memStore[k]=v; }
+function storeRemove(k) { if(_useLS) localStorage.removeItem(k); else delete _memStore[k]; }
+
+var sections = ['schedule','detox','diet','food'];
+var currentIdx = 0;
+
+function showSection(id) {
+  currentIdx = sections.indexOf(id);
+  sections.forEach(function(s) {
+    document.getElementById('sec-'+s).classList.remove('active');
+  });
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(function(btn,i) {
+    btn.classList.toggle('active', i===currentIdx);
+  });
+  var prevBtn = document.getElementById('btnPrev');
+  prevBtn.disabled = currentIdx===0;
+  prevBtn.style.display = currentIdx===0 ? 'none' : 'block';
+  var isLast = currentIdx===sections.length-1;
+  document.getElementById('btnNext').textContent = isLast ? '처음으로 ↺' : '다음 →';
+  // scroll nav into view
+  var navBtns = document.querySelectorAll('.nav-btn');
+  if(navBtns[currentIdx]) navBtns[currentIdx].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function navPrev() { if(currentIdx>0) showSection(sections[currentIdx-1]); }
+function navNext() {
+  if(currentIdx<sections.length-1) showSection(sections[currentIdx+1]);
+  else showSection(sections[0]);
+}
+
+// Daily Checklist (unused, kept for reference)
+var checkItems = [
+  {id:'water',icon:'💧',text:'물 1.5L 이상 마시기'},
+  {id:'meal3',icon:'🍽️',text:'하루 3끼 챙겨 먹기'},
+  {id:'half',icon:'🥗',text:'모든 음식 절반만 먹기'},
+  {id:'med_m',icon:'🌅',text:'아침 식전 다이어트환 복용'},
+  {id:'med_l',icon:'☀️',text:'점심 식전 다이어트환 복용'},
+  {id:'med_d',icon:'🌙',text:'저녁 식전 다이어트환 복용'},
+  {id:'sleep',icon:'😴',text:'12시 전에 취침하기'},
+  {id:'nosnack',icon:'🚫',text:'금지 음식 피하기'},
+];
+
+function renderChecklist() {
+  var today = new Date().toISOString().slice(0,10);
+  var saved = JSON.parse(storeGet('lindiet_check_'+today)||'{}');
+  var wrap = document.getElementById('dailyChecklist');
+  var html = '';
+  checkItems.forEach(function(item) {
+    var checked = saved[item.id];
+    html += '<label style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #F3F4F6;cursor:pointer">';
+    html += '<input type="checkbox" '+(checked?'checked':'')+' onchange="toggleCheck(\''+item.id+'\')" style="width:20px;height:20px;accent-color:var(--primary);cursor:pointer">';
+    html += '<span style="font-size:1.1rem">'+item.icon+'</span>';
+    html += '<span style="font-size:0.88rem;'+(checked?'text-decoration:line-through;color:var(--gray)':'')+'">'+item.text+'</span>';
+    html += '</label>';
+  });
+  wrap.innerHTML = html;
+  updateCheckProgress(saved);
+}
+
+function toggleCheck(id) {
+  var today = new Date().toISOString().slice(0,10);
+  var saved = JSON.parse(storeGet('lindiet_check_'+today)||'{}');
+  if(saved[id]) delete saved[id]; else saved[id]=true;
+  storeSet('lindiet_check_'+today,JSON.stringify(saved));
+  renderChecklist();
+}
+
+function updateCheckProgress(saved) {
+  var done = Object.keys(saved).length;
+  var total = checkItems.length;
+  var pct = Math.round(done/total*100);
+  document.getElementById('checkProgress').style.width = pct+'%';
+  document.getElementById('achieveRate').textContent = pct+'%';
+}
+
+function resetChecklist() {
+  var today = new Date().toISOString().slice(0,10);
+  storeRemove('lindiet_check_'+today);
+  renderChecklist();
+}
+
+// Memo
+function saveMemo() {
+  var today = new Date().toISOString().slice(0,10);
+  var val = document.getElementById('dailyMemo').value;
+  storeSet('lindiet_memo_'+today, val);
+}
+function loadMemo() {
+  var today = new Date().toISOString().slice(0,10);
+  var val = storeGet('lindiet_memo_'+today)||'';
+  document.getElementById('dailyMemo').value = val;
+}
+
+// Swipe gesture for mobile
+var touchStartX = 0;
+var touchStartY = 0;
+var touchEndX = 0;
+var touchEndY = 0;
+var swipeThreshold = 50;
+
+document.querySelector('.container').addEventListener('touchstart', function(e) {
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+}, {passive: true});
+
+document.querySelector('.container').addEventListener('touchend', function(e) {
+  touchEndX = e.changedTouches[0].screenX;
+  touchEndY = e.changedTouches[0].screenY;
+  var diffX = touchEndX - touchStartX;
+  var diffY = touchEndY - touchStartY;
+  // Only trigger if horizontal swipe is dominant
+  if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > swipeThreshold) {
+    if (diffX < 0) { navNext(); } // swipe left = next
+    else { navPrev(); } // swipe right = prev
+  }
+}, {passive: true});
+
+// Init
+</script>
+</body>
+</html></body></html>
